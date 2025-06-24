@@ -1,14 +1,14 @@
 # Base Hooks - OP Stack Devnet with Flashblocks
 
-Quickly spin up an OP Stack devnet with flashblocks capability and pre-deployed Uniswap V3 + USDC contracts.
+Quickly spin up an OP Stack devnet with flashblocks capability and pre-deployed ERC20 token + Uniswap V2 contracts.
 
 ## Features
 
 - 🚀 **One-command setup**: Complete OP Stack L1/L2 devnet with flashblocks
 - ⚡ **Flashblocks enabled**: Uses op-rbuilder for flashblocks capability
-- 🦄 **Uniswap V3 ready**: Pre-deployed Uniswap V3 Factory and Position Manager
-- 💰 **USDC included**: Mock USDC contract for testing
-- 🔑 **Funded accounts**: 10 pre-funded accounts with private keys
+- 🦄 **Uniswap V2 ready**: Pre-deployed Uniswap V2 Factory with liquidity pools
+- 💰 **Test token included**: ERC20 test token with 1B initial supply
+- 🔑 **Funded accounts**: Pre-funded deployer account with private key
 - 🧹 **Easy cleanup**: One command to clean everything
 
 ## Quick Start
@@ -44,16 +44,37 @@ Quickly spin up an OP Stack devnet with flashblocks capability and pre-deployed 
 
 ## Network Details
 
-- **L2 RPC**: `http://localhost:8545`
-- **Chain ID**: 901 (L2) / 900 (L1)  
+- **L1 RPC**: `http://localhost:8545`
+- **L2 RPC**: `http://localhost:8546`
+- **Builder RPC**: `http://localhost:2222`
+- **Chain ID**: 901 (L2) / 900 (L1)
 - **Flashblocks**: `ws://localhost:8080`
 
 ## What Gets Deployed
 
-- Mock USDC contract (6 decimals)
-- Uniswap V3 Factory
-- Uniswap V3 Position Manager
-- Pre-funded accounts with ETH and USDC
+- **SimpleToken**: ERC20 test token with 1B initial supply (18 decimals)
+- **Uniswap V2 Factory**: For creating trading pairs
+- **USDC/WETH Pair**: Pre-created liquidity pool with 1M USDC + 10 ETH
+- **System WETH**: Uses OP Stack predeploy at `0x4200000000000000000000000000000000000006`
+
+## Contract Verification
+
+After deployment, verify your liquidity pool:
+
+```bash
+# Source contract addresses
+source data/contracts/addresses.env
+
+# Check pair reserves (should show ~1M tokens + ~10 ETH)
+cast call --rpc-url http://localhost:2222 $PAIR_ADDRESS "getReserves()"
+
+# Verify token addresses in pair
+cast call --rpc-url http://localhost:2222 $PAIR_ADDRESS "token0()"
+cast call --rpc-url http://localhost:2222 $PAIR_ADDRESS "token1()"
+
+# Check your LP token balance
+cast call --rpc-url http://localhost:2222 $PAIR_ADDRESS "balanceOf(address)" $DEPLOYER_ADDRESS
+```
 
 ## Requirements
 
@@ -66,11 +87,29 @@ The setup script will automatically install:
 - Rust (for op-rbuilder)
 - Foundry (for contract interactions)
 
+## Project Structure
+
+```
+contracts/
+├── simple-token/          # ERC20 token Foundry project
+│   ├── src/SimpleToken.sol
+│   └── script/SimpleToken.s.sol
+└── uniswapv2/            # Uniswap V2 Foundry project
+    ├── src/UniswapV2Factory.sol
+    └── script/UniswapV2.s.sol
+scripts/
+├── setup.sh              # Prerequisites installation
+├── start-devnet.sh       # OP Stack + op-rbuilder startup
+├── deploy-contracts.sh   # Contract deployment
+└── cleanup.sh            # Cleanup processes
+```
+
 ## Troubleshooting
 
 - Check logs in `logs/` directory
 - Use `just clean` to reset everything
 - Ensure Docker is running before starting
+- Contract addresses are saved to `data/contracts/addresses.env`
 
 ## License
 
