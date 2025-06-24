@@ -6,11 +6,11 @@ echo "🧹 Cleaning up OP Stack devnet..."
 
 # Stop all running containers
 echo "Stopping Docker containers..."
-docker stop $(docker ps -q --filter "name=op-stack" --filter "name=rbuilder" --filter "name=builder-playground") 2>/dev/null || true
+docker stop $(docker ps -q --filter "name=devnet") 2>/dev/null || true
 
 # Remove containers
 echo "Removing containers..."
-docker rm $(docker ps -aq --filter "name=op-stack" --filter "name=rbuilder" --filter "name=builder-playground") 2>/dev/null || true
+docker rm $(docker ps -aq --filter "name=devnet") 2>/dev/null || true
 
 # Clean up volumes
 echo "Cleaning up volumes..."
