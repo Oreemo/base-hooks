@@ -1,0 +1,23 @@
+# Cloned repositories
+op-rbuilder/
+builder-playground/
+
+# Runtime data
+data/
+logs/
+artifacts/
+
+# Temporary files
+*.log
+*.pid
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

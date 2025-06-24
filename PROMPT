@@ -1,0 +1,10 @@
+I want to spin up a op stack devnet with flashblocks capability, the features include:
+
+1. it's a op stack devnet, it looks like https://github.com/flashbots/builder-playground is the best repo to start it
+2. I want to have flashblocks capability enabled, which means we'll need a op-rbuilder, refer to https://github.com/flashbots/op-rbuilder for starting it
+3. After deploy, I want to deploy uniswap v3 & USDC contracts to the devnet, so that I can setup a simple LP pool for it
+
+Help me generate an automated script to
+1. clean up before each run
+2. start the devnet in the background and deploy the contracts 
+3. output some private keys with funds so that I can use to interact with pool
