@@ -8,6 +8,12 @@ logs/
 artifacts/
 cache/
 
+# Foundry build artifacts
+contracts/*/broadcast/
+contracts/*/out/
+contracts/*/cache/
+contracts/*/lib/
+
 # Temporary files
 *.log
 *.pid

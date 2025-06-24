@@ -46,9 +46,59 @@ echo -e "${GREEN}✅ TEST token deployed at: $TOKEN_ADDRESS${NC}"
 BALANCE=$(cast call --rpc-url $L2_RPC_URL $TOKEN_ADDRESS "balanceOf(address)" $DEPLOYER_ADDRESS)
 BALANCE_FORMATTED=$(cast to-dec $BALANCE)
 
+# Deploy Uniswap V2 contracts
+echo -e "${YELLOW}Deploying Uniswap V2 contracts...${NC}"
+
+# Use OP Stack system WETH contract
+echo -e "${YELLOW}Using OP Stack system WETH contract...${NC}"
+WETH_ADDRESS="0x4200000000000000000000000000000000000006"
+
+echo "WETH_ADDRESS=$WETH_ADDRESS" >>data/contracts/addresses.env
+echo -e "${GREEN}✅ Using system WETH at: $WETH_ADDRESS${NC}"
+
+# Deploy Uniswap V2 Factory using forge script
+echo -e "${YELLOW}Deploying Uniswap V2 Factory...${NC}"
+cd contracts/uniswapv2
+FACTORY_ADDRESS=$(PRIVATE_KEY=$DEPLOYER_PRIVATE_KEY forge script script/UniswapV2.s.sol:UniswapV2Script --rpc-url $L2_RPC_URL --broadcast --json | jq -rc 'select(.contract_address) | .contract_address')
+
+if [ -z "$FACTORY_ADDRESS" ] || [ "$FACTORY_ADDRESS" = "null" ]; then
+    echo -e "${RED}❌ Failed to deploy Uniswap V2 Factory${NC}"
+    exit 1
+fi
+
+cd ../..
+echo "FACTORY_ADDRESS=$FACTORY_ADDRESS" >>data/contracts/addresses.env
+echo -e "${GREEN}✅ Uniswap V2 Factory deployed at: $FACTORY_ADDRESS${NC}"
+
+# Create USDC/WETH pair
+echo -e "${YELLOW}Creating USDC/WETH pair...${NC}"
+cast send --rpc-url $L2_RPC_URL --private-key $DEPLOYER_PRIVATE_KEY $FACTORY_ADDRESS "createPair(address,address)" $TOKEN_ADDRESS $WETH_ADDRESS
+
+PAIR_ADDRESS=$(cast call --rpc-url $L2_RPC_URL $FACTORY_ADDRESS "getPair(address,address)" $TOKEN_ADDRESS $WETH_ADDRESS | cast parse-bytes32-address)
+echo "PAIR_ADDRESS=$PAIR_ADDRESS" >>data/contracts/addresses.env
+echo -e "${GREEN}✅ USDC/WETH pair created at: $PAIR_ADDRESS${NC}"
+
+# Add initial liquidity
+echo -e "${YELLOW}Adding initial liquidity (1M USDC + 10 ETH)...${NC}"
+
+# Wrap 10 ETH to WETH
+cast send --rpc-url $L2_RPC_URL --private-key $DEPLOYER_PRIVATE_KEY $WETH_ADDRESS "deposit()" --value 10000000000000000000
+
+# Transfer tokens to pair
+cast send --rpc-url $L2_RPC_URL --private-key $DEPLOYER_PRIVATE_KEY $TOKEN_ADDRESS "transfer(address,uint256)" $PAIR_ADDRESS 1000000000000000000000000 # 1M USDC
+cast send --rpc-url $L2_RPC_URL --private-key $DEPLOYER_PRIVATE_KEY $WETH_ADDRESS "transfer(address,uint256)" $PAIR_ADDRESS 10000000000000000000       # 10 WETH
+
+# Mint liquidity tokens
+cast send --rpc-url $L2_RPC_URL --private-key $DEPLOYER_PRIVATE_KEY $PAIR_ADDRESS "mint(address)" $DEPLOYER_ADDRESS
+
+echo -e "${GREEN}✅ Initial liquidity added successfully${NC}"
+
 echo -e "${GREEN}✅ Contract deployment complete!${NC}"
 echo -e "${BLUE}📋 Contract addresses saved to data/contracts/addresses.env${NC}"
 echo -e "${BLUE}📋 Contract details:${NC}"
-echo -e "  • TEST Token: $TOKEN_ADDRESS"
+echo -e "  • USDC Token: $TOKEN_ADDRESS"
+echo -e "  • WETH: $WETH_ADDRESS"
+echo -e "  • Uniswap V2 Factory: $FACTORY_ADDRESS"
+echo -e "  • USDC/WETH Pair: $PAIR_ADDRESS"
 echo -e "  • Funded Address: $DEPLOYER_ADDRESS"
 echo -e "  • Balance: $(echo "scale=0; $BALANCE_FORMATTED / 1000000000000000000" | bc) USDC tokens"
