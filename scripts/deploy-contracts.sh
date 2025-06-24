@@ -27,6 +27,7 @@ echo -e "${YELLOW}Deploying test USDC token...${NC}"
 
 # Deploy using forge
 cd contracts/simple-token
+forge install OpenZeppelin/openzeppelin-contracts
 TOKEN_ADDRESS=$(forge script script/SimpleToken.s.sol:SimpleTokenScript --rpc-url $L2_RPC_URL --private-key $DEPLOYER_PRIVATE_KEY --broadcast --json | jq -rc 'select(.contract_address) | .contract_address')
 
 if [ -z "$TOKEN_ADDRESS" ] || [ "$TOKEN_ADDRESS" = "null" ]; then
