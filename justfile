@@ -11,7 +11,10 @@ clean:
     @bash scripts/cleanup.sh
 
 # Start the full devnet with flashblocks and deploy contracts
-start: clean
+start: clean start-devnet deploy
+
+# Start just the devnet (no contract deployment)
+start-devnet: clean
     @echo "🚀 Starting OP Stack devnet with flashblocks..."
     @bash scripts/start-devnet.sh
 

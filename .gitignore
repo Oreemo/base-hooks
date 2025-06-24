@@ -6,6 +6,7 @@ builder-playground/
 data/
 logs/
 artifacts/
+cache/
 
 # Temporary files
 *.log
