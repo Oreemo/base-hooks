@@ -33,8 +33,9 @@ rm -rf ./.opstack/
 
 # Clean up playground and reth data (as per op-rbuilder README)
 echo "Cleaning up playground and reth data..."
-rm -rf ~/.local/share/reth
-sudo rm -rf ~/.playground 2>/dev/null || rm -rf ~/.playground
+# Mac uses different path for reth data
+rm -rf ~/Library/Application\ Support/reth
+rm -rf ~/.playground 2>/dev/null || rm -rf ~/.playground
 
 # Remove logs
 echo "Removing logs..."
