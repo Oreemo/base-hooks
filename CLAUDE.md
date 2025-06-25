@@ -90,12 +90,14 @@ contracts/
 ## Important Notes for Claude
 
 - All contract deployment uses Foundry `forge script` approach
+- Environment variables are loaded from `.env` file in the project root
 - Uses OP Stack system WETH contract (not custom deployment)
 - Builder RPC at `http://localhost:2222` is used for contract deployment
 - Contract addresses are extracted from forge script JSON output using `jq`
 - Liquidity pool verification commands are provided in README
 - HooksPerpetualAuction uses OpenZeppelin contracts for Ownable and ReentrancyGuard
 - HooksPerpetualAuction requires Solidity 0.8.20 or higher
+- Each deployment script can run independently and will load `.env` if needed
 
 ## Dependencies
 

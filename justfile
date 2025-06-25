@@ -23,20 +23,28 @@ stop:
     @echo "🛑 Stopping devnet..."
     @bash scripts/stop-devnet.sh
 
-# Deploy contracts only (assumes devnet is running)
-deploy:
-    @echo "📦 Deploying contracts..."
-    @bash scripts/deploy-contracts.sh
-
 # Show funded accounts
 accounts:
     @echo "💰 Funded accounts:"
     @bash scripts/show-accounts.sh
 
-# Deploy HooksPerpetualAuction contract
-deploy-hooks:
+# Deploy contracts only (assumes devnet is running)
+deploy:
+    @echo "📦 Deploying contracts..."
+    @bash scripts/deploy-contracts.sh
+
+# Deploy individual components
+deploy-simple-token:
+    @echo "📦 Deploying SimpleToken..."
+    @bash scripts/deploy-simple-token.sh
+
+deploy-uniswapv2:
+    @echo "🦄 Deploying Uniswap V2..."
+    @bash scripts/deploy-uniswapv2.sh
+
+deploy-base-hooks:
     @echo "🎯 Deploying HooksPerpetualAuction..."
-    @bash scripts/deploy-hooks.sh
+    @bash scripts/deploy-base-hooks.sh
 
 # Setup prerequisites
 setup:

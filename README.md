@@ -19,17 +19,26 @@ Quickly spin up an OP Stack devnet with flashblocks capability and pre-deployed 
    just setup
    ```
 
-2. **Start the devnet**:
+2. **Configure environment**:
+   ```bash
+   # .env file should already contain:
+   # L2_RPC_URL=http://localhost:2222
+   # DEPLOYER_PRIVATE_KEY=0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6
+   # DEPLOYER_ADDRESS=0xa0Ee7A142d267C1f36714E4a8F75612F20a79720
+   # WETH_ADDRESS=0x4200000000000000000000000000000000000006
+   ```
+
+3. **Start the devnet**:
    ```bash
    just start
    ```
 
-3. **View funded accounts**:
+4. **View funded accounts**:
    ```bash
    just accounts
    ```
 
-4. **Stop when done**:
+5. **Stop when done**:
    ```bash
    just stop
    ```
