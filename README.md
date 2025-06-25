@@ -68,7 +68,8 @@ Quickly spin up an OP Stack devnet with flashblocks capability and pre-deployed 
 
 - **SimpleToken**: ERC20 test token with 1B initial supply (18 decimals)
 - **Uniswap V2 Factory**: For creating trading pairs (2 factories deployed)
-- **USDC/WETH Pairs**: Pre-created liquidity pools with different ratios
+- **Uniswap V2 Router**: For easy token swaps with slippage protection (2 routers deployed)
+- **TOKEN/WETH Pairs**: Pre-created liquidity pools with different ratios
 - **HooksPerpetualAuction**: Perpetual auction system for blockchain event hooks
 - **UniswapV2ArbHook**: Arbitrage detection and execution hook for Uniswap V2
 - **System WETH**: Uses OP Stack predeploy at `0x4200000000000000000000000000000000000006`
@@ -90,6 +91,10 @@ cast call --rpc-url http://localhost:2222 $PAIR_ADDRESS "token1()"
 
 # Check your LP token balance
 cast call --rpc-url http://localhost:2222 $PAIR_ADDRESS "balanceOf(address)" $DEPLOYER_ADDRESS
+
+# Example: Swap 1000 tokens for ETH using Router
+cast send --rpc-url http://localhost:2222 --private-key $DEPLOYER_PRIVATE_KEY $TOKEN_ADDRESS "approve(address,uint256)" $ROUTER1_ADDRESS 1000000000000000000000
+cast send --rpc-url http://localhost:2222 --private-key $DEPLOYER_PRIVATE_KEY $ROUTER1_ADDRESS "swapExactTokensForETH(uint256,uint256,address[],address,uint256)" 1000000000000000000000 0 [$TOKEN_ADDRESS,$WETH_ADDRESS] $DEPLOYER_ADDRESS 9999999999
 ```
 
 ## Requirements

@@ -3,19 +3,11 @@ pragma solidity ^0.8.0;
 
 import "forge-std/Script.sol";
 import "../src/UniswapV2Factory.sol";
-
-interface IERC20 {
-    function transfer(address to, uint256 value) external returns (bool);
-    function balanceOf(address account) external view returns (uint256);
-}
-
-interface IWETH {
-    function deposit() external payable;
-    function transfer(address to, uint256 value) external returns (bool);
-}
+import "../src/UniswapV2Router02.sol";
 
 contract UniswapV2Script is Script {
     UniswapV2Factory public factory;
+    UniswapV2Router02 public router;
     address public constant WETH = 0x4200000000000000000000000000000000000006; // OP Stack system WETH
     
     function run() external {
@@ -27,10 +19,14 @@ contract UniswapV2Script is Script {
         // Deploy Uniswap V2 Factory
         factory = new UniswapV2Factory(deployer);
         
+        // Deploy Uniswap V2 Router
+        router = new UniswapV2Router02(address(factory), WETH);
+        
         vm.stopBroadcast();
         
         // Log deployment info
         console.log("UniswapV2Factory deployed at:", address(factory));
+        console.log("UniswapV2Router02 deployed at:", address(router));
         console.log("WETH address:", WETH);
         console.log("Deployer:", deployer);
     }
