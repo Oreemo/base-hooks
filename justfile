@@ -50,6 +50,10 @@ deploy-base-hooks-deterministic:
     @echo "🎯 Deploying HooksPerpetualAuction (deterministic)..."
     @DETERMINISTIC=true bash scripts/deploy-base-hooks.sh
 
+deploy-arb-hook:
+    @echo "🎯 Deploying UniswapV2ArbHook..."
+    @bash scripts/deploy-arb-hook.sh
+
 compute-hook-address:
     @echo "🔍 Computing deterministic hook address..."
     @bash scripts/compute-hook-address.sh

@@ -50,7 +50,10 @@ Quickly spin up an OP Stack devnet with flashblocks capability and pre-deployed 
 - `just stop` - Stop the devnet
 - `just clean` - Clean up all data and processes
 - `just deploy` - Deploy contracts only (if devnet is running)
-- `just deploy-hooks` - Deploy HooksPerpetualAuction contract
+- `just deploy-simple-token` - Deploy SimpleToken only
+- `just deploy-uniswapv2` - Deploy Uniswap V2 only
+- `just deploy-base-hooks` - Deploy HooksPerpetualAuction only
+- `just deploy-arb-hook` - Deploy UniswapV2ArbHook only
 - `just accounts` - Show funded accounts with private keys
 
 ## Network Details
@@ -64,9 +67,10 @@ Quickly spin up an OP Stack devnet with flashblocks capability and pre-deployed 
 ## What Gets Deployed
 
 - **SimpleToken**: ERC20 test token with 1B initial supply (18 decimals)
-- **Uniswap V2 Factory**: For creating trading pairs
-- **USDC/WETH Pair**: Pre-created liquidity pool with 1M USDC + 10 ETH
+- **Uniswap V2 Factory**: For creating trading pairs (2 factories deployed)
+- **USDC/WETH Pairs**: Pre-created liquidity pools with different ratios
 - **HooksPerpetualAuction**: Perpetual auction system for blockchain event hooks
+- **UniswapV2ArbHook**: Arbitrage detection and execution hook for Uniswap V2
 - **System WETH**: Uses OP Stack predeploy at `0x4200000000000000000000000000000000000006`
 
 ## Contract Verification

@@ -63,6 +63,10 @@ bash scripts/deploy-uniswapv2.sh
 echo -e "\n${YELLOW}=== Step 3: Deploying HooksPerpetualAuction ===${NC}"
 bash scripts/deploy-base-hooks.sh
 
+# 4. Deploy UniswapV2ArbHook
+echo -e "\n${YELLOW}=== Step 4: Deploying UniswapV2ArbHook ===${NC}"
+bash scripts/deploy-arb-hook.sh
+
 # Final summary
 echo -e "\n${GREEN}🎉 All contract deployments complete!${NC}"
 echo -e "${BLUE}📋 Contract addresses saved to data/contracts/addresses.env${NC}"
@@ -77,6 +81,7 @@ echo -e "  • Uniswap V2 Factory 2: $FACTORY2_ADDRESS"
 echo -e "  • Uniswap V2 Pair 1: $PAIR1_ADDRESS"
 echo -e "  • Uniswap V2 Pair 2: $PAIR2_ADDRESS"
 echo -e "  • HooksPerpetualAuction: $HOOKS_ADDRESS"
+echo -e "  • UniswapV2ArbHook: $ARB_HOOK_ADDRESS"
 echo -e "  • Deployer Address: $DEPLOYER_ADDRESS"
 
 echo -e "\n${GREEN}✅ Ready for testing and interaction!${NC}"

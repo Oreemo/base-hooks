@@ -271,7 +271,9 @@ contract HooksPerpetualAuction is Ownable, ReentrancyGuard {
         }
 
         // Execute hook with fixed gas stipend
-        (bool success,) = slot.entrypoint.call{gas: hookGasStipend}(eventData);
+        (bool success,) = slot.entrypoint.call{gas: hookGasStipend}(
+            abi.encodeWithSignature("onHook(address,bytes32,bytes)", contractAddr, topic0, eventData)
+        );
 
         // Always deduct fee regardless of hook success
         slot.deposit -= slot.feePerCall;
