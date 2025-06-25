@@ -31,21 +31,4 @@ contract HooksPerpetualAuctionDeterministicScript is Script {
         
         vm.stopBroadcast();
     }
-    
-    // Function to compute the deterministic address before deployment
-    function getPrecomputedAddress() public view returns (address) {
-        bytes32 salt = generateSalt();
-        bytes memory bytecode = abi.encodePacked(
-            type(HooksPerpetualAuction).creationCode
-        );
-        bytes32 hash = keccak256(
-            abi.encodePacked(
-                bytes1(0xff),
-                address(this), // deployer address
-                salt,
-                keccak256(bytecode)
-            )
-        );
-        return address(uint160(uint256(hash)));
-    }
 }

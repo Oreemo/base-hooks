@@ -43,10 +43,10 @@ if [ "$DETERMINISTIC" = "true" ]; then
     echo -e "${YELLOW}Using deterministic deployment with CREATE2...${NC}"
 
     # Try to deploy first and handle collision if it occurs
-    DEPLOYMENT_OUTPUT=$(PRIVATE_KEY=$DEPLOYER_PRIVATE_KEY forge script script/HooksPerpetualAuctionDeterministic.s.sol:HooksPerpetualAuctionDeterministicScript --rpc-url $L2_RPC_URL --broadcast 2>&1 || true)
+    DEPLOYMENT_OUTPUT=$(forge script script/HooksPerpetualAuctionDeterministic.s.sol:HooksPerpetualAuctionDeterministicScript --rpc-url $L2_RPC_URL --private-key $DEPLOYER_PRIVATE_KEY --broadcast 2>&1 || true)
 
     # Check if deployment was successful (extract from console logs)
-    HOOKS_ADDRESS=$(echo "$DEPLOYMENT_OUTPUT" | grep "DEPLOYED_ADDRESS:" | grep -o '0x[a-fA-F0-9]\{40\}' | head -1)
+    HOOKS_ADDRESS=$(echo "$DEPLOYMENT_OUTPUT" | grep "deployed to address:" | grep -o '0x[a-fA-F0-9]\{40\}' | head -1)
 
     if [ -n "$HOOKS_ADDRESS" ]; then
         echo -e "${GREEN}✅ Contract deployed at: $HOOKS_ADDRESS${NC}"
