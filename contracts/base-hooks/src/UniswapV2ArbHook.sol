@@ -143,23 +143,33 @@ contract UniswapV2ArbHook is Ownable, ReentrancyGuard {
     function onHook(
         address contractAddr,
         bytes32 topic0,
+        bytes32 topic1,
+        bytes32 topic2,
+        bytes32 topic3,
         bytes calldata eventData
     ) external onlySequencer {
         // Decode Uniswap V2 Swap event data
         // Event signature: Swap(address indexed sender, uint256 amount0In, uint256 amount1In, uint256 amount0Out, uint256 amount1Out, address indexed to)
+        // topic0 = keccak256("Swap(address,uint256,uint256,uint256,uint256,address)")
+        // topic1 = indexed sender address
+        // topic2 = indexed to address
+        // topic3 = unused for this event (would be 0x0)
         
-        if (eventData.length < 192) { // 6 * 32 bytes
+        // Extract indexed parameters from topics
+        address sender = address(uint160(uint256(topic1))); // sender from topic1
+        address to = address(uint160(uint256(topic2)));     // to from topic2
+        
+        // eventData only contains the non-indexed parameters: amount0In, amount1In, amount0Out, amount1Out
+        if (eventData.length < 128) { // 4 * 32 bytes for non-indexed params
             revert InvalidEventData();
         }
 
         (
-            address sender,
             uint256 amount0In,
             uint256 amount1In, 
             uint256 amount0Out,
-            uint256 amount1Out,
-            address to
-        ) = abi.decode(eventData, (address, uint256, uint256, uint256, uint256, address));
+            uint256 amount1Out
+        ) = abi.decode(eventData, (uint256, uint256, uint256, uint256));
 
         // Use the contractAddr as the pair address
         _checkArbitrageOpportunity(contractAddr, amount0In, amount1In, amount0Out, amount1Out);

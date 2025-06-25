@@ -230,6 +230,9 @@ contract HooksPerpetualAuction is Ownable, ReentrancyGuard {
      *      of hook execution success to prevent griefing attacks.
      * @param contractAddr The contract address that triggered the event
      * @param topic0 The event signature that was emitted
+     * @param topic1 The first indexed event parameter (if any)
+     * @param topic2 The second indexed event parameter (if any)
+     * @param topic3 The third indexed event parameter (if any)
      * @param eventData The encoded event data to pass to the hook entrypoint
      * @param originator Address of the user who initiated the transaction causing this event
      * 
@@ -249,6 +252,9 @@ contract HooksPerpetualAuction is Ownable, ReentrancyGuard {
     function executeHook(
         address contractAddr,
         bytes32 topic0,
+        bytes32 topic1,
+        bytes32 topic2,
+        bytes32 topic3,
         bytes calldata eventData,
         address originator
     ) external nonReentrant {
@@ -272,7 +278,7 @@ contract HooksPerpetualAuction is Ownable, ReentrancyGuard {
 
         // Execute hook with fixed gas stipend
         (bool success,) = slot.entrypoint.call{gas: hookGasStipend}(
-            abi.encodeWithSignature("onHook(address,bytes32,bytes)", contractAddr, topic0, eventData)
+            abi.encodeWithSignature("onHook(address,bytes32,bytes32,bytes32,bytes32,bytes)", contractAddr, topic0, topic1, topic2, topic3, eventData)
         );
 
         // Always deduct fee regardless of hook success
