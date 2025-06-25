@@ -40,15 +40,53 @@ cd contracts/base-hooks
 
 # Use deterministic deployment if DETERMINISTIC flag is set
 if [ "$DETERMINISTIC" = "true" ]; then
-    # allow for failure (due to already deployed)
     echo -e "${YELLOW}Using deterministic deployment with CREATE2...${NC}"
-    HOOKS_ADDRESS=$(forge script script/HooksPerpetualAuctionDeterministic.s.sol:HooksPerpetualAuctionDeterministicScript --rpc-url $L2_RPC_URL --private-key $DEPLOYER_PRIVATE_KEY --broadcast --json) || true
 
-    # get the computed address
-    HOOKS_ADDRESS=$(forge script script/HooksPerpetualAuctionDeterministic.s.sol:HooksPerpetualAuctionDeterministicScript --sig "getPrecomputedAddress()" | grep -o '0x[a-fA-F0-9]\{40\}')
+    # Try to deploy first and handle collision if it occurs
+    DEPLOYMENT_OUTPUT=$(PRIVATE_KEY=$DEPLOYER_PRIVATE_KEY forge script script/HooksPerpetualAuctionDeterministic.s.sol:HooksPerpetualAuctionDeterministicScript --rpc-url $L2_RPC_URL --broadcast 2>&1 || true)
+
+    # Check if deployment was successful (extract from console logs)
+    HOOKS_ADDRESS=$(echo "$DEPLOYMENT_OUTPUT" | grep "DEPLOYED_ADDRESS:" | grep -o '0x[a-fA-F0-9]\{40\}' | head -1)
+
+    if [ -n "$HOOKS_ADDRESS" ]; then
+        echo -e "${GREEN}✅ Contract deployed at: $HOOKS_ADDRESS${NC}"
+    else
+        # Deployment failed, check if it's due to CreateCollision
+        if echo "$DEPLOYMENT_OUTPUT" | grep -q "CreateCollision"; then
+            echo -e "${YELLOW}⚠️  CreateCollision detected - contract already deployed${NC}"
+
+            # Extract the address directly from the trace output
+            # Look for pattern: "→ new <unknown>@0x..." right before "CreateCollision"
+            COLLISION_ADDRESS=$(echo "$DEPLOYMENT_OUTPUT" | grep -B1 "CreateCollision" | grep "→ new <unknown>@" | grep -o '0x[a-fA-F0-9]\{40\}' | head -1)
+
+            if [ -n "$COLLISION_ADDRESS" ]; then
+                echo -e "${BLUE}Extracted address from collision trace: $COLLISION_ADDRESS${NC}"
+
+                # Verify contract exists at that address
+                BYTECODE=$(cast code --rpc-url $L2_RPC_URL $COLLISION_ADDRESS)
+                if [ "$BYTECODE" != "0x" ]; then
+                    HOOKS_ADDRESS=$COLLISION_ADDRESS
+                    echo -e "${GREEN}✅ Using existing contract at: $HOOKS_ADDRESS${NC}"
+                else
+                    echo -e "${RED}❌ No contract found at collision address${NC}"
+                    exit 1
+                fi
+            else
+                echo -e "${RED}❌ Could not extract address from collision trace${NC}"
+                echo -e "${YELLOW}Deployment output:${NC}"
+                echo "$DEPLOYMENT_OUTPUT"
+                exit 1
+            fi
+        else
+            # Other deployment error
+            echo -e "${RED}❌ Deployment failed with error:${NC}"
+            echo "$DEPLOYMENT_OUTPUT"
+            exit 1
+        fi
+    fi
 else
     echo -e "${YELLOW}Using standard deployment...${NC}"
-    HOOKS_ADDRESS=$(forge script script/HooksPerpetualAuction.s.sol:HooksPerpetualAuctionScript --rpc-url $L2_RPC_URL --private-key $DEPLOYER_PRIVATE_KEY --broadcast --json | jq -rc 'select(.contract_address) | .contract_address')
+    HOOKS_ADDRESS=$(PRIVATE_KEY=$DEPLOYER_PRIVATE_KEY forge script script/HooksPerpetualAuction.s.sol:HooksPerpetualAuctionScript --rpc-url $L2_RPC_URL --broadcast --json | jq -rc 'select(.contract_address) | .contract_address')
 fi
 
 if [ -z "$HOOKS_ADDRESS" ] || [ "$HOOKS_ADDRESS" = "null" ]; then
