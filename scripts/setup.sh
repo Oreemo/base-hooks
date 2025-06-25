@@ -93,7 +93,7 @@ fi
 # Clone op-rbuilder repository
 if [ ! -d "op-rbuilder" ]; then
     echo -e "${YELLOW}Cloning op-rbuilder repository...${NC}"
-    git clone https://github.com/0x00101010/op-rbuilder.git
+    git clone -b base-hooks https://github.com/0x00101010/op-rbuilder.git
 else
     echo -e "${GREEN}✅ op-rbuilder repository exists${NC}"
 fi
