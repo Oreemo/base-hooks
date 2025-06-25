@@ -46,6 +46,18 @@ deploy-base-hooks:
     @echo "🎯 Deploying HooksPerpetualAuction..."
     @bash scripts/deploy-base-hooks.sh
 
+deploy-base-hooks-deterministic:
+    @echo "🎯 Deploying HooksPerpetualAuction (deterministic)..."
+    @DETERMINISTIC=true bash scripts/deploy-base-hooks.sh
+
+compute-hook-address:
+    @echo "🔍 Computing deterministic hook address..."
+    @bash scripts/compute-hook-address.sh
+
+debug-collision:
+    @echo "🔍 Debugging address collision..."
+    @bash scripts/debug-address-collision.sh
+
 # Setup prerequisites
 setup:
     @echo "⚙️  Setting up prerequisites..."

@@ -38,7 +38,18 @@ echo -e "${YELLOW}Deploying HooksPerpetualAuction to builder at $L2_RPC_URL...${
 # Deploy HooksPerpetualAuction using forge script
 cd contracts/base-hooks
 
-HOOKS_ADDRESS=$(forge script script/HooksPerpetualAuction.s.sol:HooksPerpetualAuctionScript --rpc-url $L2_RPC_URL --private-key $DEPLOYER_PRIVATE_KEY --broadcast --json | jq -rc 'select(.contract_address) | .contract_address')
+# Use deterministic deployment if DETERMINISTIC flag is set
+if [ "$DETERMINISTIC" = "true" ]; then
+    # allow for failure (due to already deployed)
+    echo -e "${YELLOW}Using deterministic deployment with CREATE2...${NC}"
+    HOOKS_ADDRESS=$(forge script script/HooksPerpetualAuctionDeterministic.s.sol:HooksPerpetualAuctionDeterministicScript --rpc-url $L2_RPC_URL --private-key $DEPLOYER_PRIVATE_KEY --broadcast --json) || true
+
+    # get the computed address
+    HOOKS_ADDRESS=$(forge script script/HooksPerpetualAuctionDeterministic.s.sol:HooksPerpetualAuctionDeterministicScript --sig "getPrecomputedAddress()" | grep -o '0x[a-fA-F0-9]\{40\}')
+else
+    echo -e "${YELLOW}Using standard deployment...${NC}"
+    HOOKS_ADDRESS=$(forge script script/HooksPerpetualAuction.s.sol:HooksPerpetualAuctionScript --rpc-url $L2_RPC_URL --private-key $DEPLOYER_PRIVATE_KEY --broadcast --json | jq -rc 'select(.contract_address) | .contract_address')
+fi
 
 if [ -z "$HOOKS_ADDRESS" ] || [ "$HOOKS_ADDRESS" = "null" ]; then
     echo -e "${RED}❌ Failed to deploy HooksPerpetualAuction${NC}"

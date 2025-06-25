@@ -75,7 +75,7 @@ echo $RBUILDER_PID >data/rbuilder.pid
 
 # Wait for services to be fully ready
 echo -e "${YELLOW}Waiting 5 seconds for services to be ready...${NC}"
-sleep 5
+sleep 10
 
 # Verify services are running
 if ! kill -0 $OPSTACK_PID 2>/dev/null; then
