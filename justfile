@@ -54,6 +54,19 @@ deploy-arb-hook:
     @echo "🎯 Deploying UniswapV2ArbHook..."
     @bash scripts/deploy-arb-hook.sh
 
+# Configuration commands
+configure:
+    @echo "⚙️  Configuring all contracts..."
+    @bash scripts/configure-contracts.sh
+
+configure-hooks:
+    @echo "⚙️  Configuring HooksPerpetualAuction..."
+    @bash scripts/configure-hooks.sh
+
+configure-arb-hook:
+    @echo "⚙️  Configuring UniswapV2ArbHook..."
+    @bash scripts/configure-arb-hook.sh
+
 compute-hook-address:
     @echo "🔍 Computing deterministic hook address..."
     @bash scripts/compute-hook-address.sh

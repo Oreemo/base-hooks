@@ -38,7 +38,12 @@ Quickly spin up an OP Stack devnet with flashblocks capability and pre-deployed 
    just accounts
    ```
 
-5. **Stop when done**:
+5. **Configure contracts** (optional - done automatically):
+   ```bash
+   just configure
+   ```
+
+6. **Stop when done**:
    ```bash
    just stop
    ```
@@ -54,6 +59,9 @@ Quickly spin up an OP Stack devnet with flashblocks capability and pre-deployed 
 - `just deploy-uniswapv2` - Deploy Uniswap V2 only
 - `just deploy-base-hooks` - Deploy HooksPerpetualAuction only
 - `just deploy-arb-hook` - Deploy UniswapV2ArbHook only
+- `just configure` - Configure all deployed contracts
+- `just configure-hooks` - Configure HooksPerpetualAuction only
+- `just configure-arb-hook` - Configure UniswapV2ArbHook only
 - `just accounts` - Show funded accounts with private keys
 
 ## Network Details
@@ -73,6 +81,26 @@ Quickly spin up an OP Stack devnet with flashblocks capability and pre-deployed 
 - **HooksPerpetualAuction**: Perpetual auction system for blockchain event hooks
 - **UniswapV2ArbHook**: Arbitrage detection and execution hook for Uniswap V2
 - **System WETH**: Uses OP Stack predeploy at `0x4200000000000000000000000000000000000006`
+
+## Contract Configuration
+
+The deployment automatically configures all contracts with optimal settings:
+
+### HooksPerpetualAuction Configuration:
+- **Originator Share**: 20% (2000 basis points) - MEV refund to transaction originators
+- **Hook Gas Stipend**: 1M gas - Gas limit for hook execution
+- **Min Calls Deposit**: 100 calls - Minimum auction duration
+
+### UniswapV2ArbHook Configuration:
+- **Sequencer**: Set to HooksPerpetualAuction contract address
+- **Supported DEXes**: Both deployed Uniswap V2 routers registered
+- **Authorized Tokens**: TOKEN and WETH enabled for arbitrage
+- **Arbitrage Parameters**:
+  - Min Profit Threshold: 0.001 ETH
+  - Max Trade Size: 5 ETH  
+  - Gas Cost Buffer: 0.005 ETH
+- **Initial Balances**: 100K tokens + 1 ETH for arbitrage execution
+- **Pair Registry**: Both TOKEN/WETH pairs registered with their respective DEXes
 
 ## Contract Verification
 

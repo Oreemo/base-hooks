@@ -67,6 +67,10 @@ bash scripts/deploy-base-hooks.sh
 echo -e "\n${YELLOW}=== Step 4: Deploying UniswapV2ArbHook ===${NC}"
 bash scripts/deploy-arb-hook.sh
 
+# 5. Configure all contracts
+echo -e "\n${YELLOW}=== Step 5: Configuring contracts ===${NC}"
+bash scripts/configure-contracts.sh
+
 # Final summary
 echo -e "\n${GREEN}🎉 All contract deployments complete!${NC}"
 echo -e "${BLUE}📋 Contract addresses saved to data/contracts/addresses.env${NC}"
