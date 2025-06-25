@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This repository provides automated scripts to quickly spin up an OP Stack devnet with flashblocks capability, including automated deployment of ERC20 test tokens and Uniswap V2 contracts for testing purposes.
+This repository provides automated scripts to quickly spin up an OP Stack devnet with flashblocks capability, including automated deployment of ERC20 test tokens, Uniswap V2 contracts, and HooksPerpetualAuction for testing purposes.
 
 ## Architecture
 
 - **OP Stack Devnet**: Uses `flashbots/builder-playground` for L1/L2 setup
 - **Flashblocks**: Integrates `flashbots/op-rbuilder` for flashblocks capability
-- **Contract Deployment**: Automated ERC20 token and Uniswap V2 deployment with liquidity provision
+- **Contract Deployment**: Automated ERC20 token, Uniswap V2, and HooksPerpetualAuction deployment with liquidity provision
 - **Shell-based**: Pure shell scripts with Just task runner
 
 ## Common Commands
@@ -30,6 +30,9 @@ just clean
 
 # Deploy contracts only (if devnet is running)
 just deploy
+
+# Deploy HooksPerpetualAuction contract
+just deploy-hooks
 
 # Show funded accounts with private keys
 just accounts
@@ -66,9 +69,13 @@ contracts/
 │   ├── src/SimpleToken.sol
 │   ├── script/SimpleToken.s.sol
 │   └── foundry.toml
-└── uniswapv2/            # Uniswap V2 Foundry project
-    ├── src/UniswapV2Factory.sol  # Factory + Pair contracts
-    ├── script/UniswapV2.s.sol    # Deployment script
+├── uniswapv2/            # Uniswap V2 Foundry project
+│   ├── src/UniswapV2Factory.sol  # Factory + Pair contracts
+│   ├── script/UniswapV2.s.sol    # Deployment script
+│   └── foundry.toml
+└── base-hooks/           # HooksPerpetualAuction Foundry project
+    ├── src/HooksPerpetualAuction.sol  # Perpetual auction system
+    ├── script/HooksPerpetualAuction.s.sol  # Deployment script
     └── foundry.toml
 ```
 
@@ -77,6 +84,7 @@ contracts/
 - **SimpleToken**: ERC20 test token with 1B initial supply (18 decimals)
 - **UniswapV2Factory**: Creates trading pairs
 - **UniswapV2Pair**: USDC/WETH pair with initial liquidity (1M USDC + 10 ETH)
+- **HooksPerpetualAuction**: Competitive bidding system for blockchain event hooks with MEV sharing
 - Contract addresses saved to: `data/contracts/addresses.env`
 
 ## Important Notes for Claude
@@ -86,6 +94,8 @@ contracts/
 - Builder RPC at `http://localhost:2222` is used for contract deployment
 - Contract addresses are extracted from forge script JSON output using `jq`
 - Liquidity pool verification commands are provided in README
+- HooksPerpetualAuction uses OpenZeppelin contracts for Ownable and ReentrancyGuard
+- HooksPerpetualAuction requires Solidity 0.8.20 or higher
 
 ## Dependencies
 

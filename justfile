@@ -33,6 +33,11 @@ accounts:
     @echo "💰 Funded accounts:"
     @bash scripts/show-accounts.sh
 
+# Deploy HooksPerpetualAuction contract
+deploy-hooks:
+    @echo "🎯 Deploying HooksPerpetualAuction..."
+    @bash scripts/deploy-hooks.sh
+
 # Setup prerequisites
 setup:
     @echo "⚙️  Setting up prerequisites..."

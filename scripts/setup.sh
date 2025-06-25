@@ -126,6 +126,24 @@ else
     echo -e "${GREEN}✅ bc is installed${NC}"
 fi
 
+# Setup HooksPerpetualAuction dependencies
+echo -e "${YELLOW}Setting up HooksPerpetualAuction dependencies...${NC}"
+cd contracts/base-hooks
+
+# Install OpenZeppelin contracts if not already installed
+if [ ! -d "lib/openzeppelin-contracts" ]; then
+    echo -e "${YELLOW}Installing OpenZeppelin contracts...${NC}"
+    forge install OpenZeppelin/openzeppelin-contracts
+else
+    echo -e "${GREEN}✅ OpenZeppelin contracts already installed${NC}"
+fi
+
+# Build HooksPerpetualAuction contracts
+echo -e "${YELLOW}Building HooksPerpetualAuction contracts...${NC}"
+forge build
+
+cd ../..
+
 # Create necessary directories
 echo -e "${YELLOW}Creating directories...${NC}"
 mkdir -p data logs artifacts

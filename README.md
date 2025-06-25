@@ -1,12 +1,13 @@
 # Base Hooks - OP Stack Devnet with Flashblocks
 
-Quickly spin up an OP Stack devnet with flashblocks capability and pre-deployed ERC20 token + Uniswap V2 contracts.
+Quickly spin up an OP Stack devnet with flashblocks capability and pre-deployed ERC20 token + Uniswap V2 + HooksPerpetualAuction contracts.
 
 ## Features
 
 - 🚀 **One-command setup**: Complete OP Stack L1/L2 devnet with flashblocks
 - ⚡ **Flashblocks enabled**: Uses op-rbuilder for flashblocks capability
 - 🦄 **Uniswap V2 ready**: Pre-deployed Uniswap V2 Factory with liquidity pools
+- 🎯 **HooksPerpetualAuction**: Competitive bidding system for blockchain event hooks
 - 💰 **Test token included**: ERC20 test token with 1B initial supply
 - 🔑 **Funded accounts**: Pre-funded deployer account with private key
 - 🧹 **Easy cleanup**: One command to clean everything
@@ -40,6 +41,7 @@ Quickly spin up an OP Stack devnet with flashblocks capability and pre-deployed 
 - `just stop` - Stop the devnet
 - `just clean` - Clean up all data and processes
 - `just deploy` - Deploy contracts only (if devnet is running)
+- `just deploy-hooks` - Deploy HooksPerpetualAuction contract
 - `just accounts` - Show funded accounts with private keys
 
 ## Network Details
@@ -55,6 +57,7 @@ Quickly spin up an OP Stack devnet with flashblocks capability and pre-deployed 
 - **SimpleToken**: ERC20 test token with 1B initial supply (18 decimals)
 - **Uniswap V2 Factory**: For creating trading pairs
 - **USDC/WETH Pair**: Pre-created liquidity pool with 1M USDC + 10 ETH
+- **HooksPerpetualAuction**: Perpetual auction system for blockchain event hooks
 - **System WETH**: Uses OP Stack predeploy at `0x4200000000000000000000000000000000000006`
 
 ## Contract Verification
@@ -94,13 +97,17 @@ contracts/
 ├── simple-token/          # ERC20 token Foundry project
 │   ├── src/SimpleToken.sol
 │   └── script/SimpleToken.s.sol
-└── uniswapv2/            # Uniswap V2 Foundry project
-    ├── src/UniswapV2Factory.sol
-    └── script/UniswapV2.s.sol
+├── uniswapv2/            # Uniswap V2 Foundry project
+│   ├── src/UniswapV2Factory.sol
+│   └── script/UniswapV2.s.sol
+└── base-hooks/           # HooksPerpetualAuction Foundry project
+    ├── src/HooksPerpetualAuction.sol
+    └── script/HooksPerpetualAuction.s.sol
 scripts/
 ├── setup.sh              # Prerequisites installation
 ├── start-devnet.sh       # OP Stack + op-rbuilder startup
 ├── deploy-contracts.sh   # Contract deployment
+├── deploy-hooks.sh       # HooksPerpetualAuction deployment
 └── cleanup.sh            # Cleanup processes
 ```
 

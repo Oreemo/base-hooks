@@ -9,10 +9,10 @@ artifacts/
 cache/
 
 # Foundry build artifacts
-contracts/*/broadcast/
-contracts/*/out/
-contracts/*/cache/
-contracts/*/lib/
+**/broadcast/**
+**/out/**
+**/cache/**
+**/lib/**
 
 # Temporary files
 *.log

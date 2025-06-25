@@ -4,3 +4,9 @@
 [submodule "contracts/simple-token/lib/openzeppelin-contracts"]
 	path = contracts/simple-token/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "contracts/base-hooks/lib/forge-std"]
+	path = contracts/base-hooks/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "contracts/base-hooks/lib/openzeppelin-contracts"]
+	path = contracts/base-hooks/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
