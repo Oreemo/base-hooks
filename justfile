@@ -84,3 +84,19 @@ debug-collision:
 setup:
     @echo "⚙️  Setting up prerequisites..."
     @bash scripts/setup.sh
+
+# Place a bid on the HooksPerpetualAuction for Uniswap V2 Swap events
+place-bid:
+    @echo "🎯 Placing bid on HooksPerpetualAuction..."
+    @bash scripts/place-bid-simple.sh
+
+# Update Rust bindings from contracts
+update-bindings:
+    @echo "🦀 Updating Rust bindings..."
+    @cd contracts/base-hooks && forge bind --bindings-path ../../op-rbuilder/crates/base-hooks-bindings --crate-name base-hooks-bindings --overwrite
+    @echo "✅ Bindings updated successfully!"
+
+# Trigger a Uniswap V2 swap to generate Swap events
+trigger-swap:
+    @echo "🔄 Triggering Uniswap V2 swap..."
+    @bash scripts/trigger-swap.sh
