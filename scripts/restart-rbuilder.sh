@@ -61,7 +61,7 @@ echo $RBUILDER_PID >data/rbuilder.pid
 
 # Wait for service to be ready
 echo -e "${YELLOW}Waiting 5 seconds for op-rbuilder to be ready...${NC}"
-sleep 5
+sleep 2
 
 # Verify service is running
 if ! kill -0 $RBUILDER_PID 2>/dev/null; then
