@@ -23,6 +23,11 @@ stop:
     @echo "🛑 Stopping devnet..."
     @bash scripts/stop-devnet.sh
 
+# Build and restart op-rbuilder
+restart-rbuilder:
+    @echo "🔄 Building and restarting op-rbuilder..."
+    @bash scripts/restart-rbuilder.sh
+
 # Show funded accounts
 accounts:
     @echo "💰 Funded accounts:"
