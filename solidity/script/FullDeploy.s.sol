@@ -95,6 +95,14 @@ contract FullDeploy is Script {
     }
 
     function _configureContracts() internal {
+        hooksPerpetualAuction.bid{value: 100_000_000_000}(
+            address(pair1),
+            keccak256("Swap(address,uint256,uint256,uint256,uint256,address)"),
+            address(arbHook),
+            1_000_000_000,
+            100
+        );
+
         arbHook.setSequencer(address(hooksPerpetualAuction));
         arbHook.addDEX(address(router1), "UniswapV2-DEX1");
         arbHook.addDEX(address(router2), "UniswapV2-DEX2");
