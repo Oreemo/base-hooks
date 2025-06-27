@@ -29,12 +29,13 @@ contract FullDeploy is Script {
         vm.startBroadcast(deployerPrivateKey);
 
         _deployMockToken();
+        _deployHooksPerpetualAuction();
+
         // deploy first instance, add 1M token + 10 ETH as liquidity
         (factory1, router1, pair1) = _deployUniswapV2Instance(1_000_000 ether, 10 ether);
         // deploy second instance, add 500k token + 5 ETH as liquidity
         (factory2, router2, pair2) = _deployUniswapV2Instance(500_000 ether, 5 ether);
 
-        _deployHooksPerpetualAuction();
         _deployUniswapV2ArbHook();
         _configureContracts();
 
