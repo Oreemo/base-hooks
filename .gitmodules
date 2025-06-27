@@ -1,18 +1,3 @@
-[submodule "contracts/test_token/simple-token/lib/forge-std"]
-	path = contracts/test_token/simple-token/lib/forge-std
-	url = https://github.com/foundry-rs/forge-std
-[submodule "contracts/simple-token/lib/openzeppelin-contracts"]
-	path = contracts/simple-token/lib/openzeppelin-contracts
-	url = https://github.com/OpenZeppelin/openzeppelin-contracts
-[submodule "contracts/base-hooks/lib/forge-std"]
-	path = contracts/base-hooks/lib/forge-std
-	url = https://github.com/foundry-rs/forge-std
-[submodule "contracts/base-hooks/lib/openzeppelin-contracts"]
-	path = contracts/base-hooks/lib/openzeppelin-contracts
-	url = https://github.com/OpenZeppelin/openzeppelin-contracts
-[submodule "contracts/uniswapv2/lib/forge-std"]
-	path = contracts/uniswapv2/lib/forge-std
-	url = https://github.com/foundry-rs/forge-std
 [submodule "solidity/lib/forge-std"]
 	path = solidity/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
