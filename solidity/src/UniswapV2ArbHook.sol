@@ -148,24 +148,26 @@ contract UniswapV2ArbHook is Ownable, ReentrancyGuard {
         bytes calldata eventData
     ) external onlySequencer {
         // Decode Uniswap V2 Swap event data
-        // Event signature: Swap(address indexed sender, uint256 amount0In, uint256 amount1In, uint256 amount0Out, uint256 amount1Out, address indexed to)
+        // Event signature: Swap(address indexed sender, uint256 indexed amount0In, uint256 amount1In, uint256 amount0Out, uint256 amount1Out, address to)
         // topic0 = keccak256("Swap(address,uint256,uint256,uint256,uint256,address)")
         // topic1 = indexed sender address
-        // topic2 = indexed to address
+        // topic2 = indexed amount0In value
         // topic3 = unused for this event (would be 0x0)
+        require(topic0 == keccak256("Swap(address,uint256,uint256,uint256,uint256,address)"), "Invalid topic0");
+        require(topic3 == bytes32(0), "Invalid topic3");
 
         // Extract indexed parameters from topics
         address sender = address(uint160(uint256(topic1))); // sender from topic1
-        address to = address(uint160(uint256(topic2))); // to from topic2
+        uint256 amount0In = uint256(topic2);
 
-        // eventData only contains the non-indexed parameters: amount0In, amount1In, amount0Out, amount1Out
+        // eventData only contains the non-indexed parameters: amount1In, amount0Out, amount1Out, to
         if (eventData.length < 128) {
             // 4 * 32 bytes for non-indexed params
             revert InvalidEventData();
         }
 
-        (uint256 amount0In, uint256 amount1In, uint256 amount0Out, uint256 amount1Out) =
-            abi.decode(eventData, (uint256, uint256, uint256, uint256));
+        (uint256 amount1In, uint256 amount0Out, uint256 amount1Out, address to) =
+            abi.decode(eventData, (uint256, uint256, uint256, address));
 
         // Use the contractAddr as the pair address
         _checkArbitrageOpportunity(contractAddr, amount0In, amount1In, amount0Out, amount1Out);

@@ -38,6 +38,7 @@ contract FullDeploy is Script {
 
         _deployUniswapV2ArbHook();
         _configureContracts();
+        _placeBids();
 
         // test_swapExactETHForTokens();
 
@@ -96,14 +97,6 @@ contract FullDeploy is Script {
     }
 
     function _configureContracts() internal {
-        hooksPerpetualAuction.bid{value: 100_000_000_000}(
-            address(pair1),
-            keccak256("Swap(address,uint256,uint256,uint256,uint256,address)"),
-            address(arbHook),
-            1_000_000_000,
-            100
-        );
-
         arbHook.setSequencer(address(hooksPerpetualAuction));
         arbHook.addDEX(address(router1), "UniswapV2-DEX1");
         arbHook.addDEX(address(router2), "UniswapV2-DEX2");
@@ -117,5 +110,60 @@ contract FullDeploy is Script {
         token.mint(address(arbHook), 100_000 ether);
         (bool success,) = address(arbHook).call{value: 1 ether}("");
         require(success, "Failed to send ETH to arbHook");
+    }
+
+    function _placeBids() internal {
+        uint256 minAmount0In = 0.01 ether;
+        HooksPerpetualAuction.EventFilter memory amount0Filter = HooksPerpetualAuction.EventFilter({
+            topic1: HooksPerpetualAuction.TopicFilter({
+                op: HooksPerpetualAuction.ComparisonOp.GT,
+                value: bytes32(minAmount0In),
+                enabled: true
+            }),
+            topic2: HooksPerpetualAuction.TopicFilter({
+                op: HooksPerpetualAuction.ComparisonOp.NONE,
+                value: bytes32(0),
+                enabled: false
+            }),
+            topic3: HooksPerpetualAuction.TopicFilter({
+                op: HooksPerpetualAuction.ComparisonOp.NONE,
+                value: bytes32(0),
+                enabled: false
+            })
+        });
+        hooksPerpetualAuction.bid{value: 2_000_000_000}(
+            address(pair1),
+            keccak256("Swap(address,uint256,uint256,uint256,uint256,address)"),
+            address(arbHook),
+            2_000_000_000,
+            1,
+            amount0Filter
+        );
+
+        HooksPerpetualAuction.EventFilter memory simpleFilter = HooksPerpetualAuction.EventFilter({
+            topic1: HooksPerpetualAuction.TopicFilter({
+                op: HooksPerpetualAuction.ComparisonOp.NONE,
+                value: bytes32(0),
+                enabled: false
+            }),
+            topic2: HooksPerpetualAuction.TopicFilter({
+                op: HooksPerpetualAuction.ComparisonOp.NONE,
+                value: bytes32(0),
+                enabled: false
+            }),
+            topic3: HooksPerpetualAuction.TopicFilter({
+                op: HooksPerpetualAuction.ComparisonOp.NONE,
+                value: bytes32(0),
+                enabled: false
+            })
+        });
+        hooksPerpetualAuction.bid{value: 100_000_000_000}(
+            address(pair1),
+            keccak256("Swap(address,uint256,uint256,uint256,uint256,address)"),
+            address(arbHook),
+            1_000_000_000,
+            100,
+            simpleFilter
+        );
     }
 }
