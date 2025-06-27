@@ -74,7 +74,7 @@ cd ..
 echo $RBUILDER_PID >data/rbuilder.pid
 
 # Wait for services to be fully ready
-echo -e "${YELLOW}Waiting 5 seconds for services to be ready...${NC}"
+echo -e "${YELLOW}Waiting 10 seconds for services to be ready...${NC}"
 sleep 10
 
 # Verify services are running
