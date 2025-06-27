@@ -55,13 +55,21 @@ Quickly spin up an OP Stack devnet with flashblocks capability and pre-deployed 
 - `just stop` - Stop the devnet
 - `just clean` - Clean up all data and processes
 - `just deploy` - Deploy contracts only (if devnet is running)
+- `just start-devnet` - Start devnet only (no contracts)
 - `just deploy-simple-token` - Deploy SimpleToken only
 - `just deploy-uniswapv2` - Deploy Uniswap V2 only
 - `just deploy-base-hooks` - Deploy HooksPerpetualAuction only
+- `just deploy-base-hooks-deterministic` - Deploy HooksPerpetualAuction with deterministic address
 - `just deploy-arb-hook` - Deploy UniswapV2ArbHook only
 - `just configure` - Configure all deployed contracts
 - `just configure-hooks` - Configure HooksPerpetualAuction only
 - `just configure-arb-hook` - Configure UniswapV2ArbHook only
+- `just restart-rbuilder` - Build and restart op-rbuilder
+- `just place-bid` - Place bid on HooksPerpetualAuction
+- `just trigger-swap` - Trigger a Uniswap V2 swap
+- `just update-bindings` - Update Rust bindings from contracts
+- `just compute-hook-address` - Compute deterministic hook address
+- `just debug-collision` - Debug address collision
 - `just accounts` - Show funded accounts with private keys
 
 ## Network Details
@@ -74,11 +82,11 @@ Quickly spin up an OP Stack devnet with flashblocks capability and pre-deployed 
 
 ## What Gets Deployed
 
-- **SimpleToken**: ERC20 test token with 1B initial supply (18 decimals)
+- **MockERC20**: ERC20 test token with 1B initial supply (18 decimals)
 - **Uniswap V2 Factory**: For creating trading pairs (2 factories deployed)
 - **Uniswap V2 Router**: For easy token swaps with slippage protection (2 routers deployed)
 - **TOKEN/WETH Pairs**: Pre-created liquidity pools with different ratios
-- **HooksPerpetualAuction**: Perpetual auction system for blockchain event hooks
+- **HooksPerpetualAuction**: Perpetual auction system for blockchain event hooks with MEV sharing
 - **UniswapV2ArbHook**: Arbitrage detection and execution hook for Uniswap V2
 - **System WETH**: Uses OP Stack predeploy at `0x4200000000000000000000000000000000000006`
 
@@ -104,7 +112,7 @@ The deployment automatically configures all contracts with optimal settings:
 
 ## Contract Verification
 
-After deployment, verify your liquidity pool:
+After deployment, verify your contracts and liquidity pools:
 
 ```bash
 # Source contract addresses
@@ -120,9 +128,11 @@ cast call --rpc-url http://localhost:2222 $PAIR_ADDRESS "token1()"
 # Check your LP token balance
 cast call --rpc-url http://localhost:2222 $PAIR_ADDRESS "balanceOf(address)" $DEPLOYER_ADDRESS
 
-# Example: Swap 1000 tokens for ETH using Router
-cast send --rpc-url http://localhost:2222 --private-key $DEPLOYER_PRIVATE_KEY $TOKEN_ADDRESS "approve(address,uint256)" $ROUTER1_ADDRESS 1000000000000000000000
-cast send --rpc-url http://localhost:2222 --private-key $DEPLOYER_PRIVATE_KEY $ROUTER1_ADDRESS "swapExactTokensForETH(uint256,uint256,address[],address,uint256)" 1000000000000000000000 0 [$TOKEN_ADDRESS,$WETH_ADDRESS] $DEPLOYER_ADDRESS 9999999999
+# Test the system by triggering a swap (generates events for hooks)
+just trigger-swap
+
+# Place a bid on the auction system
+just place-bid
 ```
 
 ## Requirements
@@ -139,22 +149,29 @@ The setup script will automatically install:
 ## Project Structure
 
 ```
-contracts/
-├── simple-token/          # ERC20 token Foundry project
-│   ├── src/SimpleToken.sol
-│   └── script/SimpleToken.s.sol
-├── uniswapv2/            # Uniswap V2 Foundry project
-│   ├── src/UniswapV2Factory.sol
-│   └── script/UniswapV2.s.sol
-└── base-hooks/           # HooksPerpetualAuction Foundry project
-    ├── src/HooksPerpetualAuction.sol
-    └── script/HooksPerpetualAuction.s.sol
+solidity/                   # Unified Foundry project
+├── src/
+│   ├── HooksPerpetualAuction.sol    # Perpetual auction system
+│   ├── UniswapV2ArbHook.sol         # Arbitrage detection hook
+│   ├── UniswapV2Factory.sol         # Uniswap V2 factory
+│   ├── UniswapV2Pair.sol            # Uniswap V2 pair
+│   ├── UniswapV2Router.sol          # Uniswap V2 router
+│   └── UQ112x112.sol               # Fixed point math library
+├── script/
+│   ├── FullDeploy.s.sol            # Complete deployment script
+│   └── TriggerSwap.s.sol           # Swap testing script
+└── test/
+    └── TestUniswapV2Swap.t.sol     # Swap tests
 scripts/
-├── setup.sh              # Prerequisites installation
-├── start-devnet.sh       # OP Stack + op-rbuilder startup
-├── deploy-contracts.sh   # Contract deployment
-├── deploy-hooks.sh       # HooksPerpetualAuction deployment
-└── cleanup.sh            # Cleanup processes
+├── setup.sh                        # Prerequisites installation
+├── start-devnet.sh                 # OP Stack + op-rbuilder startup
+├── stop-devnet.sh                  # Stop devnet
+├── restart-rbuilder.sh             # Restart op-rbuilder
+├── deploy-contracts.sh             # Contract deployment
+├── place-bid-simple.sh             # Place auction bid
+├── trigger-swap.sh                 # Trigger test swap
+├── show-accounts.sh                # Show funded accounts
+└── cleanup.sh                      # Cleanup processes
 ```
 
 ## Troubleshooting
