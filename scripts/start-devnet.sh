@@ -35,7 +35,7 @@ fi
 
 echo -e "${YELLOW}Starting builder-playground OP Stack devnet with external builder...${NC}"
 cd builder-playground
-nohup go run main.go cook opstack --external-builder http://host.docker.internal:4444 >../logs/opstack.log 2>&1 &
+nohup go run main.go cook opstack --external-builder http://host.docker.internal:4444 --enable-latest-fork 0 >../logs/opstack.log 2>&1 &
 OPSTACK_PID=$!
 cd ..
 echo $OPSTACK_PID >data/opstack.pid

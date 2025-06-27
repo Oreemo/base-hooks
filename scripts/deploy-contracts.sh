@@ -47,37 +47,36 @@ echo -e "${YELLOW}Starting modular contract deployment...${NC}"
 echo -e "${BLUE}Using deployer: $DEPLOYER_ADDRESS${NC}"
 echo -e "${BLUE}Using RPC: $L2_RPC_URL${NC}"
 
-# 1. Deploy SimpleToken
-echo -e "\n${YELLOW}=== Step 1: Deploying SimpleToken ===${NC}"
-bash scripts/deploy-simple-token.sh
+echo -e "\n${YELLOW}=== Deploying all contracts ===${NC}"
+cd solidity
+DEPLOYMENT_ADDRESSES=$(forge script script/FullDeploy.s.sol:FullDeploy --rpc-url $L2_RPC_URL --private-key $DEPLOYER_PRIVATE_KEY --broadcast --json | jq -r '.logs[0]' | head -n 1)
+cd ..
 
-# Source the addresses to get TOKEN_ADDRESS for UniswapV2
-source data/contracts/addresses.env
-export TOKEN_ADDRESS
+TOKEN_ADDRESS=$(echo $DEPLOYMENT_ADDRESSES | jq -r '.token')
+WETH_ADDRESS=$(echo $DEPLOYMENT_ADDRESSES | jq -r '.weth')
+FACTORY1_ADDRESS=$(echo $DEPLOYMENT_ADDRESSES | jq -r '.factory1')
+ROUTER1_ADDRESS=$(echo $DEPLOYMENT_ADDRESSES | jq -r '.router1')
+PAIR1_ADDRESS=$(echo $DEPLOYMENT_ADDRESSES | jq -r '.pair1')
+FACTORY2_ADDRESS=$(echo $DEPLOYMENT_ADDRESSES | jq -r '.factory2')
+ROUTER2_ADDRESS=$(echo $DEPLOYMENT_ADDRESSES | jq -r '.router2')
+PAIR2_ADDRESS=$(echo $DEPLOYMENT_ADDRESSES | jq -r '.pair2')
+HOOKS_ADDRESS=$(echo $DEPLOYMENT_ADDRESSES | jq -r '.hooksPerpetualAuction')
+ARB_HOOK_ADDRESS=$(echo $DEPLOYMENT_ADDRESSES | jq -r '.arbHook')
 
-# 2. Deploy Uniswap V2 (2 factories with liquidity)
-echo -e "\n${YELLOW}=== Step 2: Deploying Uniswap V2 ===${NC}"
-bash scripts/deploy-uniswapv2.sh
-
-# 3. Deploy HooksPerpetualAuction
-echo -e "\n${YELLOW}=== Step 3: Deploying HooksPerpetualAuction ===${NC}"
-bash scripts/deploy-base-hooks.sh
-
-# 4. Deploy UniswapV2ArbHook
-echo -e "\n${YELLOW}=== Step 4: Deploying UniswapV2ArbHook ===${NC}"
-bash scripts/deploy-arb-hook.sh
-
-# 5. Configure all contracts
-echo -e "\n${YELLOW}=== Step 5: Configuring contracts ===${NC}"
-bash scripts/configure-contracts.sh
-
-# Final summary
-echo -e "\n${GREEN}🎉 All contract deployments complete!${NC}"
-echo -e "${BLUE}📋 Contract addresses saved to data/contracts/addresses.env${NC}"
+echo "TOKEN_ADDRESS=$TOKEN_ADDRESS" >>data/contracts/addresses.env
+echo "WETH_ADDRESS=$WETH_ADDRESS" >>data/contracts/addresses.env
+echo "FACTORY1_ADDRESS=$FACTORY1_ADDRESS" >>data/contracts/addresses.env
+echo "ROUTER1_ADDRESS=$ROUTER1_ADDRESS" >>data/contracts/addresses.env
+echo "PAIR1_ADDRESS=$PAIR1_ADDRESS" >>data/contracts/addresses.env
+echo "FACTORY2_ADDRESS=$FACTORY2_ADDRESS" >>data/contracts/addresses.env
+echo "ROUTER2_ADDRESS=$ROUTER2_ADDRESS" >>data/contracts/addresses.env
+echo "PAIR2_ADDRESS=$PAIR2_ADDRESS" >>data/contracts/addresses.env
+echo "HOOKS_ADDRESS=$HOOKS_ADDRESS" >>data/contracts/addresses.env
+echo "ARB_HOOK_ADDRESS=$ARB_HOOK_ADDRESS" >>data/contracts/addresses.env
 
 # Display final summary
 echo -e "\n${BLUE}📋 Deployment Summary:${NC}"
-source data/contracts/addresses.env
+# source data/contracts/addresses.env
 echo -e "  • SimpleToken: $TOKEN_ADDRESS"
 echo -e "  • WETH (System): $WETH_ADDRESS"
 echo -e "  • Uniswap V2 Factory 1: $FACTORY1_ADDRESS"

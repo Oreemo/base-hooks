@@ -10,3 +10,15 @@
 [submodule "contracts/base-hooks/lib/openzeppelin-contracts"]
 	path = contracts/base-hooks/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "contracts/uniswapv2/lib/forge-std"]
+	path = contracts/uniswapv2/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "solidity/lib/forge-std"]
+	path = solidity/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "solidity/lib/openzeppelin-contracts"]
+	path = solidity/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "solidity/lib/solmate"]
+	path = solidity/lib/solmate
+	url = https://github.com/transmissions11/solmate

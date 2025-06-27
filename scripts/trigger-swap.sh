@@ -91,7 +91,8 @@ perform_swap() {
             --value $amount_in \
             --private-key $PRIVATE_KEY \
             --rpc-url $RPC_URL \
-            --chain-id $CHAIN_ID)
+            --chain-id $CHAIN_ID \
+            --json | jq -r ".transactionHash")
     else
         # Token to ETH swap
         echo -e "  • Approving token spending..."
@@ -102,7 +103,8 @@ perform_swap() {
             $amount_in \
             --private-key $PRIVATE_KEY \
             --rpc-url $RPC_URL \
-            --chain-id $CHAIN_ID)
+            --chain-id $CHAIN_ID \
+            --json | jq -r ".transactionHash")
 
         echo -e "  • Approval transaction: $APPROVE_TX"
 
@@ -110,16 +112,18 @@ perform_swap() {
         sleep 2
 
         echo -e "  • Swapping tokens for ETH..."
+        # TODO: fix amount out min for Token -> ETH swap
         SWAP_TX=$(cast send $router \
             "swapExactTokensForETH(uint256,uint256,address[],address,uint256)" \
             $amount_in \
-            $AMOUNT_OUT_MIN \
+            "0" \
             "[$token_in,$WETH_ADDRESS]" \
             $USER_ADDRESS \
             $DEADLINE \
             --private-key $PRIVATE_KEY \
             --rpc-url $RPC_URL \
-            --chain-id $CHAIN_ID)
+            --chain-id $CHAIN_ID \
+            --json | jq -r ".transactionHash")
     fi
 
     echo -e "  • Swap transaction: $SWAP_TX"
