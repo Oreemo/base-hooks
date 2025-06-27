@@ -93,7 +93,7 @@ place-bid:
 # Update Rust bindings from contracts
 update-bindings:
     @echo "🦀 Updating Rust bindings..."
-    @cd contracts/base-hooks && forge bind --bindings-path ../../op-rbuilder/crates/base-hooks-bindings --crate-name base-hooks-bindings --overwrite
+    @cd solidity && forge bind --bindings-path ../../op-rbuilder/crates/base-hooks-bindings --crate-name base-hooks-bindings --overwrite
     @echo "✅ Bindings updated successfully!"
 
 # Trigger a Uniswap V2 swap to generate Swap events
